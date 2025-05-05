@@ -1,0 +1,39 @@
+import cv2
+import turtle
+from tkinter import filedialog, Tk
+
+# Görsel seçimi
+root = Tk()
+root.withdraw()
+file_path = filedialog.askopenfilename(title="Görsel Seç",
+                                       filetypes=[("Görsel dosyaları", "*.png *.jpg *.jpeg *.bmp")])
+
+if not file_path:
+    print("Görsel seçilmedi.")
+else:
+    # Görseli oku ve yeniden boyutlandır
+    img = cv2.imread(file_path)
+    img = cv2.resize(img, (60, 60))  # Daha küçük = daha hızlı çizim
+
+    # Turtle ekran ayarları
+    screen = turtle.Screen()
+    screen.bgcolor("black")
+    screen.setup(width=1000, height=1000)
+    screen.title("Yuvarlaklarla Görsel Çizimi")
+
+    t = turtle.Turtle()
+    t.hideturtle()
+    t.penup()
+    t.speed(0)
+
+    # Nokta büyüklüğü
+    dot_size = 10
+
+    for y in range(img.shape[0]):
+        for x in range(img.shape[1]):
+            b, g, r = img[y, x]
+            color = (r / 255.0, g / 255.0, b / 255.0)
+            t.goto(x * dot_size - 300, -y * dot_size + 300)
+            t.dot(dot_size, color)
+
+    turtle.done()
