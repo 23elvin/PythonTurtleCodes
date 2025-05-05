@@ -1,0 +1,49 @@
+import cv2
+import turtle
+from tkinter import filedialog, Tk
+import time
+
+# Görsel seçimi
+root = Tk()
+root.withdraw()
+file_path = filedialog.askopenfilename(title="Görsel Seç",
+                                       filetypes=[("Görsel dosyaları", "*.png *.jpg *.jpeg *.bmp")])
+
+if not file_path:
+    print("Görsel seçilmedi.")
+else:
+    img = cv2.imread(file_path)
+    img = cv2.resize(img, (100, 100))  # Daha yoğun görüntü
+
+    screen = turtle.Screen()
+    screen.setup(width=1000, height=1000)
+    screen.title("Boşluksuz Çizgi Çizimi")
+    screen.bgcolor("white")
+
+    t = turtle.Turtle()
+    t.speed(0)
+    t.width(3)  # Daha kalın çizgi
+    t.penup()
+    t.hideturtle()
+
+    for y in range(img.shape[0]):
+        t.penup()
+        for x in range(img.shape[1]):
+            b, g, r = img[y, x]
+            color = (r / 255.0, g / 255.0, b / 255.0)
+            t.pencolor(color)
+
+            screen_x = x * 6 - 300
+            screen_y = -(y * 6) + 300
+
+            if x == 0:
+                t.goto(screen_x, screen_y)
+                t.pendown()
+            else:
+                t.goto(screen_x, screen_y)
+
+            time.sleep(0.0002)  # Hızlı çizim
+
+        t.penup()
+
+    turtle.done()
