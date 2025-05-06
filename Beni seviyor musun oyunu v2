@@ -1,0 +1,126 @@
+import tkinter as tk
+import random
+
+class LoveGame:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("tiktok:elvinsilvaa")
+        self.root.geometry("600x400")
+        self.root.configure(bg="#ffe6f0")
+
+        self.counter_no = 0
+        self.counter_little = 0
+
+        self.label = tk.Label(root, text="Beni seviyor musun?", font=("Helvetica", 18, "bold"),
+                              bg="#ffe6f0", fg="#cc0066", wraplength=550, justify="center")
+        self.label.pack(pady=30)
+
+        self.btn_yes = tk.Button(root, text="💖 Evet 💖", command=self.say_yes, width=15,
+                                 bg="#ff99cc", fg="white", font=("Arial", 12, "bold"))
+        self.btn_no = tk.Button(root, text="Hayır 💔", width=15,
+                                bg="#ffcccc", fg="black", font=("Arial", 12, "bold"))
+
+        self.btn_yes.place(x=150, y=200)
+        self.btn_no.place(x=330, y=200)
+        self.btn_no.bind("<Enter>", self.escape_no)
+
+    def reset_buttons(self):
+        for widget in self.root.winfo_children():
+            if isinstance(widget, tk.Button) and widget not in (self.btn_yes, self.btn_no):
+                widget.destroy()
+
+    def move_button_far(self, button):
+        current_x = button.winfo_x()
+        current_y = button.winfo_y()
+
+        while True:
+            new_x = random.randint(50, 450)
+            new_y = random.randint(100, 300)
+            dx = abs(new_x - current_x)
+            dy = abs(new_y - current_y)
+            if dx > 100 or dy > 100:
+                break
+
+        button.place(x=new_x, y=new_y)
+
+    def escape_no(self, event):
+        if self.counter_no < 3:
+            self.counter_no += 1
+            self.move_button_far(self.btn_no)
+        else:
+            self.label.config(text="İnat etme, b eni sevdiğini biliyorum 💘", fg="#cc0066")
+            self.btn_yes.place_forget()
+            self.btn_no.place_forget()
+            self.btn_ok = tk.Button(self.root, text="sadece saka yapmıştım", command=self.ask_love_again,
+                                    bg="#ff6699", fg="white", font=("Arial", 12, "bold"))
+            self.btn_ok.place(x=250, y=200)
+
+    def ask_love_again(self):
+        self.label.config(text="Beni seviyor musun?", fg="#cc0066")
+        self.reset_buttons()
+        self.counter_no = 0
+
+        self.btn_yes.config(text="💖 Evet 💖", command=self.say_yes)
+        self.btn_yes.place(x=150, y=200)
+
+        self.btn_no.config(text="Hayır 💔")
+        self.btn_no.place(x=330, y=200)
+        self.btn_no.bind("<Enter>", self.escape_no)
+
+    def say_yes(self):
+        self.label.config(text="Biliyordum zaten 😍", fg="#cc0066")
+        self.btn_yes.place_forget()
+        self.btn_no.place_forget()
+
+        self.btn_next = tk.Button(self.root, text="😘😘😘", command=self.ask_love_level,
+                                  bg="#cc0066", fg="white", font=("Arial", 12, "bold"))
+        self.btn_next.place(x=250, y=200)
+
+    def ask_love_level(self):
+        self.label.config(text="Ne kadar seviyorsun?", fg="#cc0066")
+        self.reset_buttons()
+        self.counter_little = 0
+
+        self.btn_yes.config(text="🌍 Dünyalar kadar", command=self.love_response)
+        self.btn_yes.place(x=150, y=200)
+
+        self.btn_no.config(text="Azıcık 😏", command=None)
+        self.btn_no.place(x=330, y=200)
+        self.btn_no.bind("<Enter>", self.escape_little)
+
+    def escape_little(self, event):
+        if self.counter_little < 3:
+            self.counter_little += 1
+            self.move_button_far(self.btn_no)
+        else:
+            self.label.config(text="Kalbimi kırıyorsun 😢", fg="#990033")
+            self.btn_yes.place_forget()
+            self.btn_no.place_forget()
+            self.btn_sorry = tk.Button(self.root, text="❤️ Özür dilerim aşkım ❤️", command=self.ask_love_level,
+                                       bg="#ff6666", fg="white", font=("Arial", 12, "bold"))
+            self.btn_sorry.place(x=200, y=200)
+
+    def love_response(self):
+        self.label.config(text="Aferin köle böyle ol", fg="#cc0066")
+        self.btn_yes.place_forget()
+        self.btn_no.place_forget()
+        self.reset_buttons()
+
+        self.btn_flaunt = tk.Button(self.root, text="Sımarma", command=self.final_message,
+                                    bg="#cc3399", fg="white", font=("Arial", 12, "bold"))
+        self.btn_flaunt.place(x=250, y=200)
+
+    def final_message(self):
+        self.label.config(text="insan seviğine saka yapamaz mı?💕\n\n"
+                               "Sonsuza kadar kalbimdesin…\n"
+                               "Bu küçük oyunu oynadığın için teşekkür ederim aşkım 💞", fg="#cc0066")
+        self.reset_buttons()
+
+        btn_exit = tk.Button(self.root, text="Çık 💌", command=self.root.quit,
+                             bg="#99004d", fg="white", font=("Arial", 12, "bold"))
+        btn_exit.place(x=260, y=260)
+
+# Oyunu başlat
+root = tk.Tk()
+app = LoveGame(root)
+root.mainloop()
