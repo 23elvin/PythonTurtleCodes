@@ -1,0 +1,65 @@
+import pygame
+import random
+import math
+import sys
+
+# Ekran boyutu ve başlatma
+WIDTH, HEIGHT = 800, 600
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
+
+# Parçacık sınıfı
+class Particle:
+    def __init__(self, x, y):
+        angle = random.uniform(0, 2 * math.pi)
+        speed = random.uniform(2, 6)
+        self.vx = math.cos(angle) * speed
+        self.vy = math.sin(angle) * speed
+        self.x = x
+        self.y = y
+        self.life = 100
+        self.color = (255, random.randint(0, 100), random.randint(0, 100))
+
+    def update(self):
+        self.x += self.vx
+        self.y += self.vy
+        self.life -= 1
+
+    def draw(self, surface):
+        if self.life > 0:
+            pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), 2)
+
+# Kalp merkezi
+center_x, center_y = WIDTH // 2, HEIGHT // 2
+particles = []
+
+# Ana döngü
+running = True
+while running:
+    screen.fill((0, 0, 0))
+
+    # Yeni parçacıklar üret
+    for _ in range(10):
+        particles.append(Particle(center_x, center_y))
+
+    # Parçacıkları güncelle ve çiz
+    for p in particles[:]:
+        p.update()
+        p.draw(screen)
+        if p.life <= 0:
+            particles.remove(p)
+
+    # Kalp resmi (basit)
+    pygame.draw.circle(screen, (255, 0, 0), (center_x, center_y), 6)
+
+    pygame.display.flip()
+    clock.tick(60)
+
+    # Çıkış
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+pygame.quit()
+sys.exit()
