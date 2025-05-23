@@ -1,0 +1,62 @@
+from ursina import *
+from ursina.prefabs.first_person_controller import FirstPersonController
+from tkinter import Tk, filedialog
+import os
+import shutil
+
+root = Tk()
+root.withdraw()
+
+filepath = filedialog.askopenfilename(title="Bir görsel seç (png/jpg)", filetypes=[("Görsel Dosyaları", "*.png *.jpg *.jpeg")])
+if not filepath:
+    print("Görsel seçilmedi, çıkılıyor.")
+    exit()
+
+filename = os.path.basename(filepath)
+shutil.copy(filepath, filename)
+
+app = Ursina()
+player = FirstPersonController()
+Sky()
+DirectionalLight().look_at(Vec3(1, -1, -1))
+
+boxes = []
+
+for i in range(25):
+    for j in range(25):
+        box = Button(
+            model='cube',
+            position=(j, 0, i),
+            texture=filename,
+            color=color.white,
+            parent=scene,
+            origin_y=0.5
+        )
+        boxes.append(box)
+
+def input(key):
+    if key == 'escape':
+        application.quit()
+
+    for box in boxes:
+        if box.hovered:
+            if key == 'left mouse down':
+                new = Button(
+                    model='cube',
+                    position=box.position + mouse.normal,
+                    texture=filename,
+                    color=color.white,
+                    parent=scene,
+                    origin_y=0.5
+                )
+                boxes.append(new)
+            elif key == 'right mouse down':
+                boxes.remove(box)
+                destroy(box)
+
+def update():
+    if player.position.y < 0:
+        player.position = Vec3(player.position.x, 1, player.position.z)
+
+app.run()
+  
